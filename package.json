@@ -1,0 +1,64 @@
+{
+  "name": "octokit-load-balancer",
+  "version": "1.0.0",
+  "description": "Load balance across multiple GitHub App instances, always picking the one with most available rate limit",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "publish:jsr": "npx jsr publish"
+  },
+  "keywords": [
+    "github",
+    "github-app",
+    "octokit",
+    "rate-limit",
+    "load-balancing",
+    "load-balancer",
+    "api"
+  ],
+  "author": "Mert Ciflikli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/frankie303/octokit-load-balancer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frankie303/octokit-load-balancer"
+  },
+  "peerDependencies": {
+    "@octokit/auth-app": "^7.0.0",
+    "octokit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@octokit/auth-app": "^7.2.2",
+    "@octokit/types": "^13.10.0",
+    "@types/node": "^20.19.28",
+    "@vitest/coverage-v8": "^4.0.17",
+    "octokit": "^5.0.5",
+    "prettier": "^3.7.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
