@@ -1,6 +1,6 @@
 {
   "name": "octokit-load-balancer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Load balance across multiple GitHub App instances, always picking the one with most available rate limit",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
