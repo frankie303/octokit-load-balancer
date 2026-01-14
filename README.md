@@ -7,7 +7,6 @@
 
 ## Features
 
-- **Multiple App Support** - Pool multiple GitHub Apps for higher aggregate rate limits
 - **Smart Selection** - Always picks the app with the most available rate limit
 - **Auto Key Detection** - Automatically detects raw PEM vs base64 encoded private keys
 - **TypeScript First** - Full type definitions using Octokit types
@@ -16,7 +15,7 @@
 ## Installation
 
 ```bash
-npm install octokit-load-balancer octokit @octokit/auth-app
+npm install octokit-load-balancer
 ```
 
 ## Usage
@@ -47,7 +46,7 @@ await octokit.rest.repos.get({ owner: 'your-org', repo: 'your-repo' });
 
 Every time you call `getApp(config)`:
 
-1. Creates Octokit instances for all valid app configs
+1. Creates Octokit instances for each app
 2. Fetches rate limits for all apps in parallel
 3. Returns the Octokit with the highest remaining rate limit
 
@@ -74,23 +73,3 @@ Choose based on your situation:
 
 - **Need more than 5000 requests/hour?** → Create multiple GitHub Apps and use this library to distribute load across them (N apps = N × 5000 req/hr)
 - **Single app, need graceful handling?** → Use plugin-throttling to wait and retry
-
-## Debugging
-
-Enable debug logs with the `DEBUG` environment variable:
-
-```bash
-DEBUG=octokit-load-balancer node your-script.js
-```
-
-Output:
-
-```
-[octokit-load-balancer] Using 2 valid app configs
-[octokit-load-balancer] Rate limits: app[0]: 4500/5000, app[1]: 4900/5000
-[octokit-load-balancer] Selected app[1] with 4900/5000 remaining
-```
-
-## License
-
-MIT

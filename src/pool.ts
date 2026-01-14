@@ -42,8 +42,8 @@ export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
   if (!Array.isArray(config?.apps)) {
     throw new Error('Invalid config: apps must be an array');
   }
-  if (typeof config?.baseUrl !== 'string') {
-    throw new Error('Invalid config: baseUrl must be a string');
+  if (typeof config?.baseUrl !== 'string' || !config.baseUrl) {
+    throw new Error('Invalid config: baseUrl must be a non-empty string');
   }
 
   if (config.apps.length === 0) {
@@ -58,12 +58,9 @@ export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
     );
   }
 
-  // All apps are valid at this point (type guard passed)
-  const validApps = config.apps;
+  log(`Using ${config.apps.length} app configs`);
 
-  log(`Using ${validApps.length} valid app configs`);
-
-  const octokits = validApps.map((app) => createOctokit(app, config.baseUrl));
+  const octokits = config.apps.map((app) => createOctokit(app, config.baseUrl));
   const rateLimits = await Promise.all(
     octokits.map((o, i) => getRateLimit(o, i)),
   );
@@ -97,13 +94,7 @@ export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
 }
 
 /**
- * Checks if config can satisfy at least one valid auth strategy.
- * Uses runtime checks to validate input, making it safe for JS consumers.
- *
- * Strategies (from @octokit/auth-app):
- * - App auth: appId + privateKey (base, always available)
- * - Installation auth: + installationId
- * - OAuth: + clientId + clientSecret
+ * Validates that a config has the minimum required fields (appId and privateKey).
  */
 function isCompleteConfig(config: unknown): config is GitHubAppConfig {
   return (
@@ -132,7 +123,7 @@ function decodePrivateKey(key: string): string {
 function createOctokit(appConfig: GitHubAppConfig, baseUrl: string): Octokit {
   return new Octokit({
     authStrategy: createAppAuth,
-    baseUrl: baseUrl || 'https://api.github.com',
+    baseUrl,
     auth: {
       appId: appConfig.appId,
       installationId: appConfig.installationId,

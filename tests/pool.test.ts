@@ -77,13 +77,13 @@ describe('getApp', () => {
 
     it('throws when baseUrl is not a string', async () => {
       await expect(getApp({ apps: [], baseUrl: 123 } as never)).rejects.toThrow(
-        'Invalid config: baseUrl must be a string',
+        'Invalid config: baseUrl must be a non-empty string',
       );
     });
 
     it('throws when baseUrl is missing', async () => {
       await expect(getApp({ apps: [] } as never)).rejects.toThrow(
-        'Invalid config: baseUrl must be a string',
+        'Invalid config: baseUrl must be a non-empty string',
       );
     });
   });
@@ -190,19 +190,20 @@ describe('getApp', () => {
       expect(octokit).toBeDefined();
     });
 
-    it('falls back to default baseUrl when empty string provided', async () => {
-      const octokit = await getApp({
-        apps: [
-          {
-            appId: '1',
-            installationId: '2',
-            privateKey:
-              '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----',
-          },
-        ],
-        baseUrl: '' as string,
-      } as never);
-      expect(octokit).toBeDefined();
+    it('throws when baseUrl is empty string', async () => {
+      await expect(
+        getApp({
+          apps: [
+            {
+              appId: '1',
+              installationId: '2',
+              privateKey:
+                '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----',
+            },
+          ],
+          baseUrl: '' as string,
+        } as never),
+      ).rejects.toThrow('Invalid config: baseUrl must be a non-empty string');
     });
   });
 
