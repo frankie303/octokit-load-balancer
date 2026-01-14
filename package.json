@@ -49,7 +49,6 @@
   },
   "devDependencies": {
     "@octokit/auth-app": "^7.2.2",
-    "@octokit/types": "^13.10.0",
     "@types/node": "^20.19.28",
     "@vitest/coverage-v8": "^4.0.17",
     "octokit": "^5.0.5",

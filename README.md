@@ -16,7 +16,7 @@
 ## Installation
 
 ```bash
-npm install octokit-load-balancer octokit
+npm install octokit-load-balancer octokit @octokit/auth-app
 ```
 
 ## Usage

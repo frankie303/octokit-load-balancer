@@ -1,5 +1,4 @@
 import type { StrategyOptions } from '@octokit/auth-app';
-import type { Endpoints } from '@octokit/types';
 
 /**
  * Configuration for a single GitHub App.
@@ -8,10 +7,14 @@ import type { Endpoints } from '@octokit/types';
 export type GitHubAppConfig = StrategyOptions;
 
 /**
- * Rate limit response from GitHub API
+ * Rate limit data from GitHub API
  */
-export type RateLimitResponse = Endpoints['GET /rate_limit']['response'];
-export type RateLimitData = RateLimitResponse['data']['rate'];
+export interface RateLimitData {
+  limit: number;
+  used: number;
+  remaining: number;
+  reset: number;
+}
 
 /**
  * Configuration for getApp

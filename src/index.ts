@@ -5,5 +5,4 @@ export type {
   GitHubAppPoolConfig,
   RateLimitInfo,
   RateLimitData,
-  RateLimitResponse,
 } from './types';
