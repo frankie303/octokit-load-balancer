@@ -60,3 +60,7 @@ Every time you call `getApp(config)`:
 ## Scalability
 
 This library is designed for high-throughput scenarios where a single GitHub App's rate limit (5,000 requests/hour) isn't enough. By distributing requests across multiple apps, you get N × 5,000 requests/hour.
+
+## Credits
+
+Thanks [@crash7](https://github.com/crash7) for the core selection logic.
