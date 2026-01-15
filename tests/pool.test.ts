@@ -53,101 +53,21 @@ describe('getApp', () => {
     baseUrl: 'https://api.github.com',
   });
 
-  describe('runtime validation', () => {
+  describe('validation', () => {
     it('throws when config is null', async () => {
-      await expect(getApp(null as never)).rejects.toThrow(
-        'Invalid config: apps must be an array',
-      );
+      await expect(getApp(null as never)).rejects.toThrow('No apps provided');
     });
 
     it('throws when config is undefined', async () => {
       await expect(getApp(undefined as never)).rejects.toThrow(
-        'Invalid config: apps must be an array',
+        'No apps provided',
       );
     });
 
-    it('throws when apps is not an array', async () => {
-      await expect(
-        getApp({
-          apps: 'not-an-array',
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('Invalid config: apps must be an array');
-    });
-
-    it('throws when baseUrl is not a string', async () => {
-      await expect(getApp({ apps: [], baseUrl: 123 } as never)).rejects.toThrow(
-        'Invalid config: baseUrl must be a non-empty string',
-      );
-    });
-
-    it('throws when baseUrl is missing', async () => {
-      await expect(getApp({ apps: [] } as never)).rejects.toThrow(
-        'Invalid config: baseUrl must be a non-empty string',
-      );
-    });
-  });
-
-  describe('app config validation', () => {
     it('throws when apps array is empty', async () => {
       await expect(
         getApp({ apps: [], baseUrl: 'https://api.github.com' }),
-      ).rejects.toThrow('Invalid config: apps array is empty');
-    });
-
-    it('throws when app missing privateKey', async () => {
-      await expect(
-        getApp({
-          apps: [{ appId: '1' }],
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('1 app(s) missing required appId or privateKey');
-    });
-
-    it('throws when app missing appId', async () => {
-      await expect(
-        getApp({
-          apps: [{ privateKey: 'key' }],
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('1 app(s) missing required appId or privateKey');
-    });
-
-    it('throws when apps array contains null values', async () => {
-      await expect(
-        getApp({
-          apps: [null, undefined],
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('2 app(s) missing required appId or privateKey');
-    });
-
-    it('throws when apps array contains non-object values', async () => {
-      await expect(
-        getApp({
-          apps: ['string', 123, true],
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('3 app(s) missing required appId or privateKey');
-    });
-
-    it('throws when mixing valid and invalid apps', async () => {
-      await expect(
-        getApp({
-          apps: [
-            null,
-            { appId: '1' }, // missing privateKey
-            {
-              appId: '2',
-              installationId: '3',
-              privateKey:
-                '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----',
-            },
-            undefined,
-          ],
-          baseUrl: 'https://api.github.com',
-        } as never),
-      ).rejects.toThrow('3 app(s) missing required appId or privateKey');
+      ).rejects.toThrow('No apps provided');
     });
   });
 
@@ -188,22 +108,6 @@ describe('getApp', () => {
         baseUrl: 'https://api.github.com',
       });
       expect(octokit).toBeDefined();
-    });
-
-    it('throws when baseUrl is empty string', async () => {
-      await expect(
-        getApp({
-          apps: [
-            {
-              appId: '1',
-              installationId: '2',
-              privateKey:
-                '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----',
-            },
-          ],
-          baseUrl: '' as string,
-        } as never),
-      ).rejects.toThrow('Invalid config: baseUrl must be a non-empty string');
     });
   });
 

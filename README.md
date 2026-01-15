@@ -57,8 +57,6 @@ Every time you call `getApp(config)`:
 | `apps`    | `GitHubAppConfig[]` | Yes      | Array of app configurations |
 | `baseUrl` | `string`            | Yes      | GitHub API base URL         |
 
-App configs use `GitHubAppConfig` (re-exported from `@octokit/auth-app`'s `StrategyOptions`). All apps must have valid `appId` and `privateKey` — incomplete configs will throw an error.
-
 ## Scalability
 
 This library is designed for high-throughput scenarios where a single GitHub App's rate limit (5,000 requests/hour) isn't enough. By distributing requests across multiple apps, you get N × 5,000 requests/hour.

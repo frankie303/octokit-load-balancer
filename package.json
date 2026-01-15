@@ -44,11 +44,11 @@
     "url": "git+https://github.com/frankie303/octokit-load-balancer.git"
   },
   "peerDependencies": {
-    "@octokit/auth-app": "^7.0.0",
+    "@octokit/auth-app": "^8.0.0",
     "octokit": "^5.0.0"
   },
   "devDependencies": {
-    "@octokit/auth-app": "^7.2.2",
+    "@octokit/auth-app": "^8.1.2",
     "@types/node": "^20.19.28",
     "@vitest/coverage-v8": "^4.0.17",
     "octokit": "^5.0.5",

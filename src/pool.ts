@@ -11,7 +11,6 @@ const DEBUG_KEY = 'octokit-load-balancer';
 
 /**
  * Get the Octokit instance with the most available rate limit.
- * Pass your app configurations directly - incomplete configs are filtered out.
  *
  * @example
  * ```typescript
@@ -36,26 +35,11 @@ const DEBUG_KEY = 'octokit-load-balancer';
  * await octokit.rest.repos.get({ owner: 'org', repo: 'repo' })
  * ```
  *
- * @throws {Error} When no valid app configurations are provided
+ * @throws {Error} When no apps are provided or all apps have exhausted their rate limits
  */
 export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
-  if (!Array.isArray(config?.apps)) {
-    throw new Error('Invalid config: apps must be an array');
-  }
-  if (typeof config?.baseUrl !== 'string' || !config.baseUrl) {
-    throw new Error('Invalid config: baseUrl must be a non-empty string');
-  }
-
-  if (config.apps.length === 0) {
-    throw new Error('Invalid config: apps array is empty');
-  }
-
-  const invalidApps = config.apps.filter((app) => !isCompleteConfig(app));
-
-  if (invalidApps.length > 0) {
-    throw new Error(
-      `Invalid config: ${invalidApps.length} app(s) missing required appId or privateKey`,
-    );
+  if (!config?.apps?.length) {
+    throw new Error('No apps provided');
   }
 
   log(`Using ${config.apps.length} app configs`);
@@ -73,9 +57,9 @@ export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
   );
 
   const { bestIndex, rateLimit } = rateLimits.reduce(
-    (acc, cur, i) => {
+    (acc, cur) => {
       if (cur.remaining > acc.rateLimit.remaining) {
-        return { bestIndex: i, rateLimit: cur };
+        return { bestIndex: cur.appIndex, rateLimit: cur };
       }
       return acc;
     },
@@ -94,21 +78,7 @@ export async function getApp(config: GitHubAppPoolConfig): Promise<Octokit> {
 }
 
 /**
- * Validates that a config has the minimum required fields (appId and privateKey).
- */
-function isCompleteConfig(config: unknown): config is GitHubAppConfig {
-  return (
-    typeof config === 'object' &&
-    config !== null &&
-    'appId' in config &&
-    'privateKey' in config &&
-    !!(config.appId && config.privateKey)
-  );
-}
-
-/**
- * Decodes a private key, auto-detecting base64 encoding.
- * PEM keys start with "-----BEGIN", so we can detect raw vs base64.
+ * Decodes base64-encoded private keys, passes through PEM unchanged.
  */
 function decodePrivateKey(key: string): string {
   if (key.startsWith('-----BEGIN ') && key.includes('-----END ')) {
@@ -125,9 +95,12 @@ function createOctokit(appConfig: GitHubAppConfig, baseUrl: string): Octokit {
     authStrategy: createAppAuth,
     baseUrl,
     auth: {
-      appId: appConfig.appId,
-      installationId: appConfig.installationId,
-      privateKey: decodePrivateKey(appConfig.privateKey),
+      ...appConfig,
+      // TODO: this type check can be removed once the issue will be fixed in @octokit/auth-app
+      privateKey:
+        appConfig.privateKey && typeof appConfig.privateKey === 'string'
+          ? decodePrivateKey(appConfig.privateKey)
+          : undefined,
     },
   });
 }
