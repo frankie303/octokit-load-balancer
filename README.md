@@ -59,17 +59,6 @@ Every time you call `getApp(config)`:
 
 App configs use `GitHubAppConfig` (re-exported from `@octokit/auth-app`'s `StrategyOptions`). All apps must have valid `appId` and `privateKey` — incomplete configs will throw an error.
 
-## Comparison with @octokit/plugin-throttling
+## Scalability
 
-[`@octokit/plugin-throttling`](https://github.com/octokit/plugin-throttling.js) handles rate limits by queuing and retrying requests. This library takes a different approach: distribute load across multiple GitHub Apps to maximize available quota.
-
-|                    | octokit-load-balancer              | plugin-throttling         |
-| ------------------ | ---------------------------------- | ------------------------- |
-| Strategy           | Pick app with most remaining quota | Queue and retry on limits |
-| Multiple apps      | Yes                                | No                        |
-| Handles exhaustion | Throws                             | Waits and retries         |
-
-Choose based on your situation:
-
-- **Need more than 5000 requests/hour?** → Create multiple GitHub Apps and use this library to distribute load across them (N apps = N × 5000 req/hr)
-- **Single app, need graceful handling?** → Use plugin-throttling to wait and retry
+This library is designed for high-throughput scenarios where a single GitHub App's rate limit (5,000 requests/hour) isn't enough. By distributing requests across multiple apps, you get N × 5,000 requests/hour.

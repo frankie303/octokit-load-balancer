@@ -41,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/frankie303/octokit-load-balancer"
+    "url": "git+https://github.com/frankie303/octokit-load-balancer.git"
   },
   "peerDependencies": {
     "@octokit/auth-app": "^7.0.0",
